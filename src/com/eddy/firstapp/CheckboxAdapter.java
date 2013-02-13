@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,8 @@ public class CheckboxAdapter extends BaseAdapter {
 		
 		TextView phone = (TextView) convertView.findViewById(R.id.phone);
 		phone.setText(listData.get(positionId).get("phone").toString());
+		
+		image.setImageBitmap((Bitmap) listData.get(positionId).get("contactPhoto"));
 		
 		CheckBox check = (CheckBox) convertView.findViewById(R.id.checked);
 		check.setOnCheckedChangeListener(new OnCheckedChangeListener() {

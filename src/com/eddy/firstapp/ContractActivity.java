@@ -55,18 +55,18 @@ public class ContractActivity extends Activity {
 		List<Map<String, Object>> mList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> mMap = null;
 
-		List<HashMap<String, String>> contractList = fillMaps();
-		Collections.sort(contractList, new Comparator<HashMap<String, String>>() {
+		List<HashMap<String, Object>> contractList = fillMaps();
+		Collections.sort(contractList, new Comparator<HashMap<String, Object>>() {
 			@Override
-			public int compare(HashMap<String, String> h1, HashMap<String, String> h2) {
+			public int compare(HashMap<String, Object> h1, HashMap<String, Object> h2) {
 				Comparator<Object> cmp = Collator.getInstance(java.util.Locale.CHINA); 
 				return cmp.compare(h1.get("name").toString(), h2.get("name").toString());
 			}
 		});
 		
-		for (Map<String, String> map : contractList) {
+		for (Map<String, Object> map : contractList) {
 			mMap = new HashMap<String, Object>();
-			mMap.put("img", R.drawable.icon);
+			mMap.put("contactPhoto", map.get("contactPhoto"));
 			mMap.put("username", map.get("name"));
 			mMap.put("phone", map.get("key"));
 			mMap.put("checked", false);
@@ -78,51 +78,48 @@ public class ContractActivity extends Activity {
 		mListView.setAdapter(mAdapter);
 	}
 
-	private List<HashMap<String, String>> fillMaps() {
-		List<HashMap<String, String>> items = new ArrayList<HashMap<String, String>>();
+	private List<HashMap<String, Object>> fillMaps() {
+		List<HashMap<String, Object>> items = new ArrayList<HashMap<String, Object>>();
 		String[] PHONES_PROJECTION = new String[] {Phone.DISPLAY_NAME, Phone.NUMBER, Photo.PHOTO_ID,Phone.CONTACT_ID }; 
 		Cursor phoneCursor = null;
 		try {
 			ContentResolver resolver = getContentResolver();
 			phoneCursor = resolver.query(Phone.CONTENT_URI, PHONES_PROJECTION, null, null, null);
-			if(phoneCursor != null) {
-				while(phoneCursor.moveToNext()) {
-					//得到手机号码  
-				    String phoneNumber = phoneCursor.getString(PHONES_NUMBER_INDEX);  
-				    //当手机号码为空的或者为空字段 跳过当前循环  
-				    if (phoneNumber == null || phoneNumber.trim().equals(""))  
-				        continue;  
-				    
-				  //得到联系人名称  
-			        String contactName = phoneCursor.getString(PHONES_DISPLAY_NAME_INDEX);  
-			          
-			        //得到联系人ID  
-			        Long contactid = phoneCursor.getLong(PHONES_CONTACT_ID_INDEX);  
-			  
-			        //得到联系人头像ID  
-			        Long photoid = phoneCursor.getLong(PHONES_PHOTO_ID_INDEX);  
-			          
-			        //得到联系人头像Bitamp  
-			        Bitmap contactPhoto = null;  
-			  
-			        //photoid 大于0 表示联系人有头像 如果没有给此人设置头像则给他一个默认的  
-			        if(photoid > 0 ) {  
-			            Uri uri =ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,contactid);  
-			            InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(resolver, uri);  
-			            contactPhoto = BitmapFactory.decodeStream(input);  
-			        }else {  
-			            contactPhoto = BitmapFactory.decodeResource(getResources(), R.drawable.icon);  
-			        } 
-			        
-			        HashMap<String, String> i = new HashMap<String, String>();
-					i.put("name", contactName);
-					i.put("key", phoneNumber);
-					items.add(i);
-				}
-			} else {
-				HashMap<String, String> i = new HashMap<String, String>();
-				i.put("name", "Your Phone");
-				i.put("key", "Have No Contacts.");
+			if(phoneCursor == null) {
+				return items;
+			}
+			while(phoneCursor.moveToNext()) {
+				//得到手机号码  
+			    String phoneNumber = phoneCursor.getString(PHONES_NUMBER_INDEX);  
+			    //当手机号码为空的或者为空字段 跳过当前循环  
+			    if (phoneNumber == null || phoneNumber.trim().equals(""))  
+			        continue;  
+			    
+			  //得到联系人名称  
+		        String contactName = phoneCursor.getString(PHONES_DISPLAY_NAME_INDEX);  
+		          
+		        //得到联系人ID  
+		        Long contactid = phoneCursor.getLong(PHONES_CONTACT_ID_INDEX);  
+		  
+		        //得到联系人头像ID  
+		        Long photoid = phoneCursor.getLong(PHONES_PHOTO_ID_INDEX);  
+		          
+		        //得到联系人头像Bitamp  
+		        Bitmap contactPhoto = null;  
+		  
+		        //photoid 大于0 表示联系人有头像 如果没有给此人设置头像则给他一个默认的  
+		        if(photoid > 0 ) {  
+		            Uri uri =ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,contactid);  
+		            InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(resolver, uri);  
+		            contactPhoto = BitmapFactory.decodeStream(input);  
+		        }else {  
+		            contactPhoto = BitmapFactory.decodeResource(getResources(), R.drawable.icon);  
+		        } 
+		        
+		        HashMap<String, Object> i = new HashMap<String, Object>();
+				i.put("name", contactName);
+				i.put("key", phoneNumber);
+				i.put("contactPhoto", contactPhoto);
 				items.add(i);
 			}
 		} finally {
