@@ -26,10 +26,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.eddy.firstapp.DisplayMessageActivity"
-            android:label="@string/title_activity_display_message" >
-        </activity>
-        <activity
             android:name="com.eddy.firstapp.ContractActivity"
             android:label="@string/title_activity_contract"
             android:parentActivityName="android.app.ListActivity" >
