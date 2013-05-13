@@ -70,6 +70,7 @@ public class ContractActivity extends Activity {
 			mMap.put("username", map.get("name"));
 			mMap.put("phone", map.get("key"));
 			mMap.put("checked", false);
+			System.out.println(map.get("name") + "|" + map.get("key"));
 			mList.add(mMap);
 		}
 
